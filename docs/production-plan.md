@@ -33,6 +33,9 @@ as untrusted evidence and is never allowed to rewrite contract rules.
 - Validator comparison binds the decision, clause partition, reason codes,
   confidence, source health, and source fingerprints.
 - Source failures produce no permit, even if a model returns approval.
+- Permit validation and consumption both require high confidence and a
+  nonzero nonce issued by the approval path; low/medium-confidence approvals
+  must fail closed even if their stored status is `approved`.
 - Proposals expire before evaluation and permits expire before consumption.
 - Executors are bound to an exact address and cannot be replaced by callers.
 - A consumed permit cannot be replayed.
@@ -67,6 +70,8 @@ invalidated, expired, consumed, and finalized states.
 - A live approved proposal consumes exactly once.
 - A changed constitution invalidates an otherwise approved proposal.
 - Source failure and unavailable references cannot issue a permit.
+- Low- and medium-confidence approvals with nonce `0` are neither valid nor
+  consumable permits.
 - The public readback shows the complete clause result and source fingerprints.
 - The production app never displays a local-only approval.
 

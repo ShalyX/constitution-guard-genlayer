@@ -1,6 +1,8 @@
 import json
 import time
 
+import pytest
+
 
 CONTRACT = "contracts/constitution_guard.py"
 EXECUTOR = "0x2222222222222222222222222222222222222222"
@@ -173,6 +175,58 @@ def test_complete_consensus_issues_one_use_permit_and_consumes_only_by_executor(
     assert contract.get_proposal("upgrade-1")["status"] == "permit_consumed"
     with direct_vm.expect_revert("Proposal has no active permit"):
         contract.consume_permit("upgrade-1")
+
+
+def evaluate_approved_proposal_with_confidence(
+    contract, direct_vm, direct_alice, direct_bob, confidence, proposal_id
+):
+    create_default_constitution(contract, direct_vm, direct_alice)
+    submit_default_proposal(
+        contract, direct_vm, direct_bob, proposal_id=proposal_id
+    )
+    mock_sources(direct_vm)
+    review = json.loads(approve_review())
+    review["confidence_band"] = confidence
+    direct_vm.mock_llm(r"(?s).*public RPC.*", json.dumps(review))
+
+    direct_vm.sender = direct_alice
+    contract.evaluate_proposal(proposal_id)
+
+
+@pytest.mark.parametrize("confidence", ["medium", "low"])
+def test_non_high_confidence_approval_is_not_a_valid_permit(
+    direct_vm, direct_deploy, direct_alice, direct_bob, confidence
+):
+    contract = deploy(direct_deploy)
+    evaluate_approved_proposal_with_confidence(
+        contract, direct_vm, direct_alice, direct_bob, confidence, "low-confidence"
+    )
+
+    proposal = contract.get_proposal("low-confidence")
+    assert proposal["status"] == "approved"
+    assert proposal["confidence_band"] == confidence
+    assert proposal["permit_nonce"] == 0
+
+    direct_vm.sender = bytes.fromhex(EXECUTOR[2:])
+    assert contract.is_permit_valid("low-confidence") is False
+
+
+@pytest.mark.parametrize("confidence", ["medium", "low"])
+def test_non_high_confidence_approval_cannot_be_consumed(
+    direct_vm, direct_deploy, direct_alice, direct_bob, confidence
+):
+    contract = deploy(direct_deploy)
+    evaluate_approved_proposal_with_confidence(
+        contract, direct_vm, direct_alice, direct_bob, confidence, "low-confidence"
+    )
+
+    direct_vm.sender = bytes.fromhex(EXECUTOR[2:])
+    with direct_vm.expect_revert("Proposal has no active permit"):
+        contract.consume_permit("low-confidence")
+
+    proposal = contract.get_proposal("low-confidence")
+    assert proposal["permit_nonce"] == 0
+    assert proposal["consumed"] is False
 
 
 def test_missing_source_fails_closed_even_if_model_claims_approval(

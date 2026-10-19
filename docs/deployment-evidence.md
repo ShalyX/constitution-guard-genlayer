@@ -3,11 +3,19 @@
 This page records the public deployment and live verification evidence for the
 contract-focused ConstitutionGuard release.
 
-## Corrected deployments
+## Current remediation deployments
 
-- [ConstitutionGuard](https://explorer-studio.genlayer.com/address/0xCD6BdcA9d43fef77D5386877126fED9EBF6f17e4)
-- [GovernedExecutorV2](https://explorer-studio.genlayer.com/address/0x63B21c0f8d8C8398651aD057BAf1Ec283d636314)
-- [Corrected guard upgrade transaction](https://explorer-studio.genlayer.com/tx/0x2be9795b0dd3630ddfb6e754a10b8b8993941d5d5b424e5d13d2def44f89fee9)
+The latest Guard includes the high-confidence and nonzero-nonce checks in
+both `is_permit_valid` and `consume_permit`. The matching executor instance was
+deployed with this Guard address as its constructor argument.
+
+- [ConstitutionGuard](https://explorer-studio.genlayer.com/address/0x323BB0F53527FcB1c687D30189E81CEc33BfcfdE)
+- [GovernedExecutorV2](https://explorer-studio.genlayer.com/address/0x7e0e4A24183a1F656530C0498998D1f3A74aCe9f)
+- [Guard deployment transaction](https://explorer-studio.genlayer.com/tx/0x4fe4d01577f228ddf04d39206d6e70019ec14011076dbc4421bc66ef04eae132)
+- [Executor deployment transaction](https://explorer-studio.genlayer.com/tx/0x204a9bf85f6081e644f83811aeab73751cc5d7a07435e39c4933bbb4d8c12b4c)
+
+The earlier Guard and executor deployments remain part of the prior live-test
+record; they are not the current remediation instances.
 
 ## Live verification
 

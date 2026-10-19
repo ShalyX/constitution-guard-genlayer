@@ -10,8 +10,10 @@ GenLayer validators fetch the declared public sources inside the
 non-deterministic flow and independently classify every clause as satisfied,
 violated, or unclear. The contract stores the complete disjoint clause result,
 source fingerprints, confidence band, and rationale. Only a high-confidence
-approval with healthy sources issues a one-use permit. Constitution updates,
-deactivation, expiry, wrong callers, and replay invalidate the execution path.
+approval with healthy sources issues a one-use permit. Both permit validation
+and consumption require that approval's nonzero issued nonce. Constitution
+updates, deactivation, expiry, wrong callers, and replay invalidate the
+execution path.
 
 This first slice is contract-focused. It includes the reusable guard, a
 finality-gated `GovernedExecutor` example, direct behavioral tests, a production
@@ -26,5 +28,5 @@ python -m pytest tests/direct -q
 ```
 
 The tests cover complete clause partitions, public-source retrieval, source
-failure, stale constitution versions, expiry, executor authorization, permit
-consumption, and replay.
+failure, stale constitution versions, expiry, executor authorization,
+low/medium-confidence approvals without a nonce, permit consumption, and replay.

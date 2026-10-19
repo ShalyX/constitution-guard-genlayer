@@ -590,7 +590,12 @@ class ConstitutionGuard(gl.Contract):
     @gl.public.write
     def consume_permit(self, proposal_id: str) -> None:
         proposal = self._get_proposal(proposal_id)
-        if proposal.status != "approved" or proposal.consumed:
+        if (
+            proposal.status != "approved"
+            or proposal.consumed
+            or proposal.confidence_band != "high"
+            or proposal.permit_nonce == 0
+        ):
             raise gl.vm.UserError(f"{ERROR_EXPECTED} Proposal has no active permit")
         if self._sender_hex() != proposal.executor.lower():
             raise gl.vm.UserError(f"{ERROR_EXPECTED} Caller is not the designated executor")
@@ -611,6 +616,8 @@ class ConstitutionGuard(gl.Contract):
         return bool(
             proposal.status == "approved"
             and not proposal.consumed
+            and proposal.confidence_band == "high"
+            and proposal.permit_nonce != 0
             and proposal.valid_until > self._now()
             and constitution.active
             and constitution.version == proposal.constitution_version
