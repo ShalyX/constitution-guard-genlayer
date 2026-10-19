@@ -17,7 +17,11 @@ deployed with this Guard address as its constructor argument.
 The earlier Guard and executor deployments remain part of the prior live-test
 record; they are not the current remediation instances.
 
-## Live verification
+## Prior live verification on earlier deployments
+
+The scenarios below document the earlier Guard and executor instances, not
+the current remediation deployments above. The confidence/nonce regression
+cases were rerun against the corrected source locally.
 
 - Constitution registration finalized:
   [0xe1ef9d1a...](https://explorer-studio.genlayer.com/tx/0xe1ef9d1ac5e338c24baf900d382fb0db102b612a2ce3c6ea7dbf67a21c9e81fc)
